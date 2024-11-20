@@ -6,7 +6,6 @@ export const rejectUser = async (farmerId, reason) => {
     await axios.post(
       `${process.env.BACKEND_URL}/admin/farmers/${farmerId}/reject?reason=${reason}`,
       {},
-
       {
         headers: {
           Authorization: `Bearer ${getToken()}`,

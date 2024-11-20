@@ -1,71 +1,30 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Layout from "../../../components/Layout";
 import UserCard from "../../../components/UserCard";
+import { getUsers } from "@/api/getUsers";
+import { deleteUser } from "@/api/deleteUser";
 
 const ManageUsers = () => {
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: "Alice Farmer",
-      email: "alice@example.com",
-      role: "Farmer",
-      status: "Active",
-    },
-    {
-      id: 2,
-      name: "Bob Buyer",
-      email: "bob@example.com",
-      role: "Buyer",
-      status: "Active",
-    },
-    {
-      id: 3,
-      name: "David Farmer",
-      email: "david@example.com",
-      role: "Farmer",
-      status: "Active",
-    },
-    {
-      id: 4,
-      name: "Eve Buyer",
-      email: "eve@example.com",
-      role: "Buyer",
-      status: "Active",
-    },
-  ]);
+  const [users, setUsers] = useState([]);
 
-  const handleDelete = (id) => {
-    // TODO: Implement delete user API call
-    // Example:
-    // fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+  const getGuys = async () => {
+    try {
+      const guys = await getUsers();
+      setUsers(guys);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
 
-    // Mock delete by removing user from list
-    setUsers(users.filter((user) => user.id !== id));
+  useEffect(() => {
+    getGuys();
+  }, []);
+
+  const handleDelete = async (id) => {
+    await deleteUser(id);
+    setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
     alert(`User with ID ${id} deleted.`);
-  };
-
-  const handleToggleStatus = (id) => {
-    // TODO: Implement disable/enable user API call
-    // Example:
-    // fetch(`/api/admin/users/${id}/toggle-status`, { method: 'POST' });
-
-    // Mock toggle by updating user status
-    setUsers(
-      users.map((user) =>
-        user.id === id
-          ? {
-              ...user,
-              status: user.status === "Active" ? "Disabled" : "Active",
-            }
-          : user
-      )
-    );
-  };
-
-  const handleEdit = (id) => {
-    // TODO: Implement edit user functionality
-    alert(`Edit functionality for user ID ${id} is not implemented yet.`);
   };
 
   return (
@@ -76,13 +35,7 @@ const ManageUsers = () => {
           <p>No users available.</p>
         ) : (
           users.map((user) => (
-            <UserCard
-              key={user.id}
-              user={user}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onToggleStatus={handleToggleStatus}
-            />
+            <UserCard key={user.id} user={user} onDelete={handleDelete} />
           ))
         )}
       </div>
