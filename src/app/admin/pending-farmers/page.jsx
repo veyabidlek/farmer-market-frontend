@@ -5,6 +5,8 @@ import Layout from "../../../components/Layout";
 import FarmerCard from "../../../components/FarmerCard";
 import { getPendingFarmers } from "@/api/getPendingFarmers";
 import { getUserById } from "@/api/getUserById";
+import { approveUser } from "@/api/approveUser";
+import { rejectUser } from "@/api/rejectUser";
 
 const PendingFarmers = () => {
   const [farmers, setFarmers] = useState([]);
@@ -50,26 +52,31 @@ const PendingFarmers = () => {
     fetchPendingFarmers();
   }, []);
 
-  const handleApprove = (farmerId) => {
-    // TODO: Implement approve farmer API call
-    // Example:
-    // fetch(`/api/admin/farmers/${farmerId}/approve`, { method: 'POST' });
-
-    // Mock approval by removing from pending list
-    setFarmers(farmers.filter((farmer) => farmer.farmer_id !== farmerId));
-    alert(`Farmer with ID ${farmerId} approved.`);
+  const handleApprove = async (farmerId) => {
+    try {
+      await approveUser(farmerId);
+      setFarmers(farmers.filter((farmer) => farmer.farmer_id !== farmerId));
+      alert(`Farmer with ID ${farmerId} approved.`);
+    } catch (err) {
+      console.error("Failed to approve farmer...");
+    }
   };
 
-  const handleReject = (farmerId) => {
-    const reason = prompt("Enter reason for rejection:");
-    if (reason) {
-      // TODO: Implement reject farmer API call with reason
-      // Example:
-      // fetch(`/api/admin/farmers/${farmerId}/reject`, { method: 'POST', body: JSON.stringify({ reason }) });
+  const handleReject = async (farmerId) => {
+    try {
+      const reason = prompt("Enter reason for rejection:");
 
-      // Mock rejection by removing from pending list
-      setFarmers(farmers.filter((farmer) => farmer.farmer_id !== farmerId));
-      alert(`Farmer with ID ${farmerId} rejected for reason: ${reason}`);
+      if (reason) {
+        await rejectUser(farmerId, reason);
+        setFarmers((prevFarmers) =>
+          prevFarmers.filter((farmer) => farmer.farmer_id !== farmerId)
+        );
+
+        alert(`Farmer with ID ${farmerId} rejected for reason: ${reason}`);
+      }
+    } catch (err) {
+      console.error("Error rejecting the farmer: ", err);
+      alert("Failed to reject the farmer. Please try again.");
     }
   };
 

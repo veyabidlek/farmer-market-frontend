@@ -10,7 +10,7 @@ export const getPendingFarmers = async () => {
         },
       }
     );
-    console.log(response);
+
     return response.data;
   } catch (err) {
     console.error("cannot get pending users...");
