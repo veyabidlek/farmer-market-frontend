@@ -2,20 +2,18 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { isAuthenticatedAtom } from "@/app/atoms";
-import { useAtom } from "jotai";
 
 const AdminLogin = () => {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useAtom(isAuthenticatedAtom);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    if (isAuthenticated) {
+    const token = localStorage.getItem("token");
+    if (token) {
       router.push("/admin/dashboard");
     }
-  }, [isAuthenticated, router]);
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,7 +27,7 @@ const AdminLogin = () => {
       );
 
       localStorage.setItem("token", response.data.access_token);
-      setIsAuthenticated(true);
+      router.push("/admin/dashboard");
       alert("Welcome admin");
     } catch (err) {
       alert("Wrong email or password");

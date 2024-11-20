@@ -1,20 +1,17 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAtom } from "jotai";
-import { isAuthenticatedAtom } from "./atoms";
 
 export default function Home() {
   const router = useRouter();
-  const [isAuthenticated] = useAtom(isAuthenticatedAtom);
-
+  const token = localStorage.getItem("token");
   useEffect(() => {
-    if (isAuthenticated) {
+    if (token) {
       router.push("/admin/dashboard");
     } else {
       router.push("/admin/login");
     }
-  }, [isAuthenticated, router]);
+  }, [router]);
 
   return <div>Loading...</div>;
 }

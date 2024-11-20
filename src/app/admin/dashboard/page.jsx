@@ -1,24 +1,22 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAtom } from "jotai";
-import { isAuthenticatedAtom } from "@/app/atoms";
 import Layout from "../../../components/Layout";
 import { getBuyersCount } from "@/api/getBuyersCount";
 import { getFarmersCount } from "@/api/getFarmersCount";
 
 const Dashboard = () => {
   const router = useRouter();
-  const [isAuthenticated] = useAtom(isAuthenticatedAtom);
   const [userCount, setUserCount] = useState(0);
   const [farmerCount, setFarmerCount] = useState(0);
   const [buyerCount, setBuyerCount] = useState(0);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    const token = localStorage.getItem("token");
+    if (!token) {
       router.push("/admin/login");
     }
-  }, [isAuthenticated, router]);
+  }, []);
 
   useEffect(() => {
     const fetchCounts = async () => {
@@ -34,11 +32,11 @@ const Dashboard = () => {
         console.error("Error fetching counts:", error);
       }
     };
-
-    if (isAuthenticated) {
+    const token = localStorage.getItem("token");
+    if (token) {
       fetchCounts();
     }
-  }, [isAuthenticated]);
+  }, []);
 
   return (
     <Layout>

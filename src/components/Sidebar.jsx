@@ -1,15 +1,11 @@
 // components/Sidebar.jsx
-import { isAuthenticatedAtom } from "@/app/atoms";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAtom } from "jotai";
 const Sidebar = () => {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useAtom(isAuthenticatedAtom);
   const handleClick = () => {
     if (confirm("Are you sure you wanna leave?")) {
       localStorage.removeItem("token");
-      setIsAuthenticated(false);
       router.push("/admin/login");
     }
   };
